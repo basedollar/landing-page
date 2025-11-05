@@ -76,7 +76,7 @@
             height: 40px;
             position: relative;
             margin: 3rem 0;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .stepped-pattern::before,
@@ -84,7 +84,7 @@
             content: '';
             position: absolute;
             width: 100%;
-            height: 50%;
+            height: 20px;
             transition: transform 0.1s ease-out;
             will-change: transform;
         }
@@ -830,7 +830,7 @@
 
     <!-- Stats Section -->
     <section class="stats-section" style="position: relative; overflow: hidden;">
-        <div class="inca-pattern"></div>
+        <div class="inca-pattern" style="top: 0; left: 0;"></div>
         <div class="container" style="position: relative; z-index: 1;">
             <div class="section-header">
                 <h2 style="color: white;">Protocol Ecosystem</h2>
@@ -860,9 +860,9 @@
     <div class="stepped-pattern"></div>
 
     <!-- How It Works -->
-    <section id="how-it-works" style="position: relative;">
-        <div class="geometric-decoration geo-1" style="top: 10%; left: auto; right: 5%;"></div>
-        <div class="geometric-decoration geo-2" style="bottom: 10%; right: auto; left: 5%;"></div>
+    <section id="how-it-works" style="position: relative; overflow: hidden;">
+        <div class="geometric-decoration geo-1 parallax-geo" style="top: 10%; left: auto; right: 5%;" data-speed="0.15"></div>
+        <div class="geometric-decoration geo-2 parallax-geo" style="bottom: 10%; right: auto; left: 5%;" data-speed="-0.2"></div>
         <div class="container">
             <div class="section-header">
                 <h2>How It Works</h2>
@@ -905,7 +905,7 @@
 
     <!-- CTA Section -->
     <section style="background: linear-gradient(135deg, var(--cream), var(--light-sand)); padding: 4rem 2rem; position: relative; overflow: hidden;">
-        <div class="textile-pattern" style="top: 50%; transform: translateY(-50%);"></div>
+        <div class="textile-pattern" style="top: 50%; transform: translateY(-50%); height: 332px;"></div>
         <div class="container" style="text-align: center; position: relative; z-index: 1;">
             <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to Get Started?</h2>
             <p style="font-size: 1.2rem; color: var(--deep-teal); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
@@ -919,7 +919,7 @@
 
     <!-- Footer -->
     <footer style="position: relative;">
-        <div class="stepped-pattern" style="position: absolute; top: 2rem; left: 0; opacity: 0.1;"></div>
+        <!-- <div class="stepped-pattern" style="position: absolute; top: 2rem; left: 0; opacity: 0.1;"></div> -->
         <div class="footer-content">
             <div class="logo" style="justify-content: center; margin-bottom: 2rem; color: var(--gold);">
                 <div class="logo-symbol">B</div>
@@ -1150,16 +1150,22 @@
         // Animate stepped patterns on scroll - split horizontally
         window.addEventListener('scroll', () => {
             const scrolled = window.pageYOffset;
-            document.querySelectorAll('.stepped-pattern').forEach((pattern) => {
-                const offsetTop = pattern.offsetTop;
-                const distance = scrolled - offsetTop + window.innerHeight;
-                const movement = Math.sin(distance * 0.002) * 30;
+            document.querySelectorAll('.stepped-pattern').forEach((pattern, index) => {
+                const rect = pattern.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                
+                // Calculate movement based on element's position in viewport
+                const elementCenter = rect.top + rect.height / 2;
+                const viewportCenter = windowHeight / 2;
+                const distanceFromCenter = elementCenter - viewportCenter;
+                
+                // Alternate direction for each pattern
+                const direction = index % 2 === 0 ? 1 : -1;
+                const movement = (distanceFromCenter / windowHeight) * 60 * direction;
                 
                 // Move top and bottom rows in opposite directions
-                const before = pattern;
-                const computedStyle = window.getComputedStyle(before, '::before');
-                before.style.setProperty('--before-x', `${movement}px`);
-                before.style.setProperty('--after-x', `${-movement}px`);
+                pattern.style.setProperty('--before-x', `${movement}px`);
+                pattern.style.setProperty('--after-x', `${-movement}px`);
             });
         });
 
@@ -1174,6 +1180,20 @@
             }
         `;
         document.head.appendChild(splitStyle);
+
+        // Add subtle parallax to geometric shapes in How It Works section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('.parallax-geo').forEach((el) => {
+                const speed = parseFloat(el.getAttribute('data-speed')) || 0.1;
+                const yPos = scrolled * speed;
+                const currentTransform = el.style.transform || '';
+                // Preserve the translate from bouncing animation, add parallax on top
+                if (!currentTransform.includes('translate(')) {
+                    el.style.transform = `translateY(${yPos}px)`;
+                }
+            });
+        });
 
         // Add bounce to collateral items on hover
         document.querySelectorAll('.collateral-item').forEach(item => {
