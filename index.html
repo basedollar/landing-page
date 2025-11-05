@@ -1,142 +1,1215 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>basedollar</title>
-    <meta name="description" content="Basedollar. A Liquity V2 fork for the Base ecosystem.">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js" type="text/javascript"></script>
+    <title>BaseD - Decentralized Stablecoin on Base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
-        box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        html,
+        :root {
+            --terracotta: #C85A3E;
+            --gold: #D4A574;
+            --deep-teal: #2D5F5D;
+            --cream: #F5E6D3;
+            --dark-brown: #3D2517;
+            --light-sand: #F9F5F0;
+            --accent-blue: #4A7C7E;
+        }
+
         body {
-        background-color: #FEDCC8;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark-brown);
+            background-color: var(--light-sand);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .parallax {
-        perspective: 100px;
-        height: 100vh;
-        overflow-x: hidden;
-        overflow-y: auto;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        right: 0;
-        bottom: 0;
-        margin-left: -1500px;
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
         }
 
-        .parallax__layer {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        }
-        .parallax__layer img {
-        display: block;
-        position: absolute;
-        bottom: 0;
-        }
-
-        .parallax__cover {
-        background: #2D112B;
-        display: block;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        height: 2000px;
-        z-index: 2;
-        }
-
-        .parallax__layer__0 {
-        transform: translateZ(-300px) scale(4);
-        }
-
-        .parallax__layer__1 {
-        transform: translateZ(-250px) scale(3.5);
-        }
-
-        .parallax__layer__2 {
-        transform: translateZ(-200px) scale(3);
-        }
-
-        .parallax__layer__3 {
-        transform: translateZ(-150px) scale(2.5);
-        }
-
-        .parallax__layer__4 {
-        transform: translateZ(-100px) scale(2);
-        }
-
-        .parallax__layer__5 {
-        transform: translateZ(-50px) scale(1.5);
-        }
-
-        .parallax__layer__6 {
-        transform: translateZ(0px) scale(1);
-        }
-
-        .title{
+        /* Inca Pattern Background */
+        .inca-pattern {
             position: absolute;
+            opacity: 0.08;
+            pointer-events: none;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(45deg, var(--terracotta) 0px, transparent 2px, transparent 10px),
+                repeating-linear-gradient(-45deg, var(--gold) 0px, transparent 2px, transparent 10px);
+            animation: pattern-shift 20s linear infinite;
+        }
+
+        @keyframes pattern-shift {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 100px 100px, -100px -100px; }
+        }
+
+        /* Inca Textile Pattern */
+        .textile-pattern {
+            position: absolute;
+            width: 100%;
+            height: 212px;
+            opacity: 0.15;
+            pointer-events: none;
+            background-image:
+                linear-gradient(90deg, var(--terracotta) 2px, transparent 2px),
+                linear-gradient(var(--gold) 2px, transparent 2px),
+                repeating-linear-gradient(45deg, transparent, transparent 20px, var(--deep-teal) 20px, var(--deep-teal) 22px);
+            background-size: 30px 30px, 30px 30px, 40px 40px;
+            background-position: 0 0, 0 0, 0 0;
+        }
+
+        /* Stepped Pyramid Pattern */
+        .stepped-pattern {
+            width: 100%;
+            height: 40px;
+            position: relative;
+            margin: 3rem 0;
+            overflow: hidden;
+        }
+
+        .stepped-pattern::before,
+        .stepped-pattern::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .stepped-pattern::before {
+            top: 0;
+            background-image: linear-gradient(to right,
+                transparent 0%, transparent 20%,
+                var(--terracotta) 20%, var(--terracotta) 40%,
+                transparent 40%, transparent 60%,
+                var(--gold) 60%, var(--gold) 80%,
+                transparent 80%, transparent 100%
+            );
+        }
+
+        .stepped-pattern::after {
+            bottom: 0;
+            background-image: linear-gradient(to right,
+                transparent 10%, transparent 30%,
+                var(--deep-teal) 30%, var(--deep-teal) 50%,
+                transparent 50%, transparent 70%,
+                var(--terracotta) 70%, var(--terracotta) 90%,
+                transparent 90%, transparent 100%
+            );
+        }
+
+        /* Zigzag Border */
+        .zigzag-border {
+            height: 30px;
+            background:
+                linear-gradient(135deg, var(--terracotta) 25%, transparent 25%) -15px 0,
+                linear-gradient(225deg, var(--terracotta) 25%, transparent 25%) -15px 0,
+                linear-gradient(315deg, var(--terracotta) 25%, transparent 25%),
+                linear-gradient(45deg, var(--terracotta) 25%, transparent 25%);
+            background-size: 30px 30px;
+            background-color: var(--gold);
+            position: relative;
+        }
+
+        /* Chakana (Inca Cross) */
+        .chakana-decoration {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            opacity: 0.12;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .chakana-1 {
+            top: 20%;
+            right: 10%;
+            background:
+                linear-gradient(var(--terracotta), var(--terracotta)),
+                linear-gradient(var(--terracotta), var(--terracotta)),
+                linear-gradient(var(--terracotta), var(--terracotta)),
+                linear-gradient(var(--terracotta), var(--terracotta));
+            background-size: 100% 20%, 20% 100%, 40% 40%, 60% 60%;
+            background-position: center 40%, 40% center, 30% 30%, 20% 20%;
+            background-repeat: no-repeat;
+            animation: rotate-pulse 10s ease-in-out infinite;
+        }
+
+        .chakana-2 {
+            bottom: 20%;
+            left: 8%;
+            background:
+                linear-gradient(var(--gold), var(--gold)),
+                linear-gradient(var(--gold), var(--gold)),
+                linear-gradient(var(--deep-teal), var(--deep-teal));
+            background-size: 100% 20%, 20% 100%, 40% 40%;
+            background-position: center 40%, 40% center, 30% 30%;
+            background-repeat: no-repeat;
+            animation: rotate-pulse 12s ease-in-out infinite reverse;
+        }
+
+        @keyframes rotate-pulse {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(90deg) scale(1.1); }
+        }
+
+        /* Diamond Pattern */
+        .diamond-pattern {
+            width: 100%;
+            height: 60px;
+            background-image:
+                linear-gradient(135deg, var(--terracotta) 25%, transparent 25%),
+                linear-gradient(225deg, var(--terracotta) 25%, transparent 25%),
+                linear-gradient(45deg, var(--gold) 25%, transparent 25%),
+                linear-gradient(315deg, var(--gold) 25%, transparent 25%);
+            background-position: 30px 0, 30px 0, 0 0, 0 0;
+            background-size: 60px 60px;
+            background-repeat: repeat-x;
+            margin: 2rem 0;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(249, 245, 240, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--terracotta);
+            font-family: 'Space Grotesk', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-symbol {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--terracotta), var(--gold));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--dark-brown);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--terracotta);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-top: 80px;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--light-sand) 100%);
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--terracotta), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero .tagline {
+            font-size: 1.5rem;
+            color: var(--deep-teal);
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .hero .description {
+            font-size: 1.1rem;
+            color: var(--dark-brown);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--terracotta), #A34A36);
+            color: white;
+            box-shadow: 0 4px 20px rgba(200, 90, 62, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(200, 90, 62, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--cream);
+            color: var(--dark-brown);
+            border: 2px solid var(--gold);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gold);
+            color: white;
+        }
+
+        /* Geometric Decoration */
+        .geometric-decoration {
+            position: absolute;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+            will-change: transform;
+        }
+
+        .geo-1 {
+            top: 15%;
+            left: 5%;
+            width: 120px;
+            height: 120px;
+            background-image:
+                linear-gradient(to bottom, var(--terracotta) 30%, transparent 30%),
+                linear-gradient(to right, transparent 35%, var(--terracotta) 35%, var(--terracotta) 65%, transparent 65%),
+                linear-gradient(to bottom, transparent 30%, var(--terracotta) 30%, var(--terracotta) 60%, transparent 60%);
+            opacity: 0.25;
+        }
+
+        .geo-2 {
+            bottom: 20%;
+            right: 8%;
+            width: 100px;
+            height: 100px;
+            background:
+                conic-gradient(from 45deg, var(--terracotta) 90deg, var(--gold) 90deg 180deg, var(--deep-teal) 180deg 270deg, var(--terracotta) 270deg);
+            opacity: 0.3;
+            border-radius: 10px;
+        }
+
+        .geo-3 {
             top: 50%;
+            left: 3%;
+            width: 80px;
+            height: 80px;
+            background:
+                repeating-linear-gradient(45deg, var(--gold) 0px, var(--gold) 10px, transparent 10px, transparent 20px);
+            opacity: 0.2;
+        }
+
+        .geo-4 {
+            top: 35%;
+            right: 5%;
+            width: 90px;
+            height: 90px;
+            background:
+                linear-gradient(135deg, var(--deep-teal) 50%, transparent 50%),
+                linear-gradient(225deg, var(--gold) 50%, transparent 50%);
+            opacity: 0.25;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            color: var(--dark-brown);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 150px;
-            color: #fff;
-            z-index: 10;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--terracotta), var(--gold));
         }
 
-        .bottomtext{
-            z-index: 10;
-            color: #fff;
-            font-size: 25px;
-            text-align: right;
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--deep-teal);
+            max-width: 700px;
+            margin: 1.5rem auto 0;
         }
 
-        .bottomtext2{
-            z-index: 10;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            border-left: 6px solid var(--gold);
+            border-bottom: 3px solid var(--terracotta);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background:
+                linear-gradient(135deg, transparent 50%, var(--cream) 50%),
+                linear-gradient(225deg, transparent 50%, var(--gold) 50%);
+            opacity: 0.3;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            border-left-color: var(--terracotta);
+            border-bottom-color: var(--deep-teal);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--cream), var(--gold));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            color: var(--dark-brown);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Collateral Grid */
+        .collateral-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .collateral-item {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            border-top: 4px solid var(--gold);
+            overflow: hidden;
+        }
+
+        .collateral-item::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--terracotta),
+                var(--terracotta) 8px,
+                var(--gold) 8px,
+                var(--gold) 16px
+            );
+        }
+
+        .collateral-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .collateral-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--terracotta);
+            margin-bottom: 0.5rem;
+        }
+
+        .collateral-ltv {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--deep-teal);
+            margin: 1rem 0;
+        }
+
+        .collateral-label {
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(135deg, var(--deep-teal), var(--accent-blue));
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* How It Works */
+        .steps {
+            display: grid;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-number {
+            min-width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--terracotta), var(--gold));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-brown);
+        }
+
+        .step-content p {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-brown);
+            color: var(--cream);
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero .tagline {
+                font-size: 1.2rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .step {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Accent Patterns */
+        .accent-pattern {
+            width: 100%;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--terracotta),
+                var(--terracotta) 10px,
+                var(--gold) 10px,
+                var(--gold) 20px,
+                var(--deep-teal) 20px,
+                var(--deep-teal) 30px
+            );
         }
     </style>
-
 </head>
 <body>
-    <h1 class="title">GM</h1>
-    <div class="parallax">
-        
-        <div class="parallax__layer parallax__layer__0">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_0.png?raw=true" />
+    <div class="accent-pattern"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-symbol">B</div>
+                BaseD
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#collateral">Collateral</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="https://basedollar.org" target="_blank">Launch App</a></li>
+            </ul>
         </div>
-        <div class="parallax__layer parallax__layer__1">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_1.png?raw=true" />
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="inca-pattern"></div>
+        <div class="textile-pattern" style="top: 0;"></div>
+        <div class="textile-pattern" style="bottom: 0;"></div>
+        <div class="chakana-decoration chakana-1"></div>
+        <div class="hero-content">
+            <h1>BaseD</h1>
+            <p class="tagline">BOLD/Base Fork, Flying Ready</p>
+            <p class="description">
+                A next-generation stablecoin protocol on Base with maximized AERO synergy.
+                Leverage your LP tokens as collateral and earn yield while borrowing.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://basedollar.org" class="btn btn-primary" target="_blank">Launch App</a>
+                <a href="#how-it-works" class="btn btn-secondary">Learn More</a>
+            </div>
         </div>
-        <div class="parallax__layer parallax__layer__2">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_2.png?raw=true" />
+    </section>
+
+    <div class="zigzag-border"></div>
+
+    <!-- Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="stepped-pattern"></div>
+            <div class="section-header">
+                <h2>Core Features</h2>
+                <p>Built for the Base ecosystem with innovative DeFi mechanics</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🌾</div>
+                    <h3>AERO Synergy</h3>
+                    <p>Accept vAMM and sAMM LP tokens as collateral. LP tokens are staked for AERO yields while borrowers forfeit a percentage as interest.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Dual Branch System</h3>
+                    <p>Regular branch for ETH, wstETH, cbBTC with standard redemptions. Special LP branch with no redemptions and aggregated stability pool.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Optimized Yields</h3>
+                    <p>FsBaseD holders earn 10-20% of AERO collected plus liquidation gains. Protocol builds permanent liquidity through POL.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>High LTV Ratios</h3>
+                    <p>Up to 90.91% LTV on ETH, 87.5% on cbBTC/wstETH, 82.5% on sAMM LPs, and 70% on vAMM LPs for maximum capital efficiency.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>Decentralized Governance</h3>
+                    <p>GovToken holders earn 10% of all interest and AERO farmed, with voting power over collateral additions and AERO allocations.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Robust Liquidations</h3>
+                    <p>Innovative FsBaseD opt-in layer handles liquidations for LP collateral branches, ensuring system stability and depositor rewards.</p>
+                </div>
+            </div>
         </div>
-        <div class="parallax__layer parallax__layer__3">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_3.png?raw=true" />
+    </section>
+
+    <div class="diamond-pattern"></div>
+
+    <!-- Collateral Section -->
+    <section id="collateral" style="background: var(--cream); position: relative;">
+        <div class="chakana-decoration chakana-2"></div>
+        <div class="container">
+            <div class="section-header">
+                <h2>Supported Collateral</h2>
+                <p>Diverse collateral options for maximum flexibility</p>
+            </div>
+            <div class="collateral-grid">
+                <div class="collateral-item">
+                    <div class="collateral-name">wETH</div>
+                    <div class="collateral-ltv">90.91%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+                <div class="collateral-item">
+                    <div class="collateral-name">cbBTC</div>
+                    <div class="collateral-ltv">87.5%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+                <div class="collateral-item">
+                    <div class="collateral-name">wstETH</div>
+                    <div class="collateral-ltv">87.5%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+                <div class="collateral-item">
+                    <div class="collateral-name">superOETHb</div>
+                    <div class="collateral-ltv">85%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+                <div class="collateral-item">
+                    <div class="collateral-name">sAMM LPs</div>
+                    <div class="collateral-ltv">82.5%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+                <div class="collateral-item">
+                    <div class="collateral-name">vAMM LPs</div>
+                    <div class="collateral-ltv">70%</div>
+                    <div class="collateral-label">LTV</div>
+                </div>
+            </div>
         </div>
-        <div class="parallax__layer parallax__layer__4">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_4.png?raw=true" />
+    </section>
+
+    <div class="zigzag-border" style="transform: scaleY(-1);"></div>
+
+    <!-- Stats Section -->
+    <section class="stats-section" style="position: relative; overflow: hidden;">
+        <div class="inca-pattern"></div>
+        <div class="container" style="position: relative; z-index: 1;">
+            <div class="section-header">
+                <h2 style="color: white;">Protocol Ecosystem</h2>
+                <p style="color: var(--cream);">Building the future of decentralized stablecoins on Base</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">$3B+</div>
+                    <div class="stat-label">Total Market Cap on Base</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$118M+</div>
+                    <div class="stat-label">LP Pools TVL</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">11</div>
+                    <div class="stat-label">Collateral Types</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">35%</div>
+                    <div class="stat-label">AERO Yield Share</div>
+                </div>
+            </div>
         </div>
-        <div class="parallax__layer parallax__layer__5">
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_5.png?raw=true" />
+    </section>
+
+    <div class="stepped-pattern"></div>
+
+    <!-- How It Works -->
+    <section id="how-it-works" style="position: relative;">
+        <div class="geometric-decoration geo-1" style="top: 10%; left: auto; right: 5%;"></div>
+        <div class="geometric-decoration geo-2" style="bottom: 10%; right: auto; left: 5%;"></div>
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Simple steps to start leveraging your assets</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Choose Your Collateral</h3>
+                        <p>Select from basic collaterals (ETH, cbBTC, wstETH, superOETHb) or LP tokens (sAMM/vAMM) from Aerodrome. Each collateral type offers different LTV ratios optimized for safety and capital efficiency.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Deposit & Borrow</h3>
+                        <p>Deposit your collateral and borrow BaseD stablecoin. For LP tokens, your collateral continues earning AERO yields while securing your loan. Set your own interest rate for basic collaterals.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Earn with sBaseD</h3>
+                        <p>Deposit BaseD into the stability pool (sBaseD) to earn 80% of all interest collected. Opt into FsBaseD to also earn 10-20% of AERO yields and liquidation rewards.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3>Participate in Governance</h3>
+                        <p>Stake GovToken to earn 10% of protocol interest and AERO yields. Vote on new collateral additions and direct protocol-owned veAERO voting power to optimize yields.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="parallax__layer parallax__layer__6">
+    </section>
+
+    <div class="diamond-pattern"></div>
+
+    <!-- CTA Section -->
+    <section style="background: linear-gradient(135deg, var(--cream), var(--light-sand)); padding: 4rem 2rem; position: relative; overflow: hidden;">
+        <div class="textile-pattern" style="top: 50%; transform: translateY(-50%);"></div>
+        <div class="container" style="text-align: center; position: relative; z-index: 1;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to Get Started?</h2>
+            <p style="font-size: 1.2rem; color: var(--deep-teal); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Join the BaseD ecosystem and unlock the full potential of your assets on Base.
+            </p>
+            <a href="https://basedollar.org" class="btn btn-primary" target="_blank" style="font-size: 1.1rem;">Launch App Now</a>
+        </div>
+    </section>
+
+    <div class="zigzag-border"></div>
+
+    <!-- Footer -->
+    <footer style="position: relative;">
+        <div class="stepped-pattern" style="position: absolute; top: 2rem; left: 0; opacity: 0.1;"></div>
+        <div class="footer-content">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem; color: var(--gold);">
+                <div class="logo-symbol">B</div>
+                BaseD
+            </div>
+            <div class="footer-links">
+                <a href="https://basedollar.org" target="_blank">App</a>
+                <a href="https://docs.basedollar.org" target="_blank">Docs</a>
+                <a href="https://twitter.com/basedollar" target="_blank">Twitter</a>
+                <a href="https://discord.gg/basedollar" target="_blank">Discord</a>
+                <a href="https://github.com/basedollar" target="_blank">GitHub</a>
+            </div>
+            <p style="opacity: 0.7; margin-top: 2rem;">
+                © 2025 BaseD. A BOLD/Base fork with maximized AERO synergy.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scroll for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add scroll animation for feature cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Animate elements on scroll
+        document.querySelectorAll('.feature-card, .step, .collateral-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Navbar background on scroll
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                nav.style.boxShadow = '0 2px 20px rgba(0,0,0,0.1)';
+            } else {
+                nav.style.boxShadow = 'none';
+            }
+
+            lastScroll = currentScroll;
+        });
+
+        // Bouncing shapes - simple and non-intrusive
+        class BouncingShape {
+            constructor(element) {
+                this.element = element;
+                this.parent = element.parentElement;
+                
+                this.width = 70 + Math.random() * 60;
+                this.height = this.width;
+                
+                const parentRect = this.parent.getBoundingClientRect();
+                this.x = Math.random() * (parentRect.width - this.width);
+                this.y = Math.random() * (parentRect.height - this.height);
+                
+                // Slower, gentler velocities
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 1;
+                
+                this.element.style.width = this.width + 'px';
+                this.element.style.height = this.height + 'px';
+                this.element.style.position = 'absolute';
+            }
             
-            <img src="https://github.com/samdbeckham/blog/blob/master/dev/_assets/images/articles/firewatch/layer_6.png?raw=true" />
-        </div>
-        <div class="parallax__cover">
-            <h1 class="bottomtext">Basedollar. A Liquity V2 fork for the Base ecosystem.</h1>
-            <h2 class="bottomtext">Coming soon.</h2>
-        </div>
-    </div>
-    
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.rotation += this.rotationSpeed;
+                
+                const parentRect = this.parent.getBoundingClientRect();
+                const maxX = parentRect.width - this.width;
+                const maxY = parentRect.height - this.height;
+                
+                // Simple bounce within parent bounds
+                if (this.x <= 0 || this.x >= maxX) {
+                    this.vx *= -1;
+                    this.x = Math.max(0, Math.min(this.x, maxX));
+                }
+                if (this.y <= 0 || this.y >= maxY) {
+                    this.vy *= -1;
+                    this.y = Math.max(0, Math.min(this.y, maxY));
+                }
+                
+                this.element.style.transform = `translate(${this.x}px, ${this.y}px) rotate(${this.rotation}deg)`;
+            }
+        }
+        
+        // Generate random geometric patterns
+        function createRandomShape() {
+            const div = document.createElement('div');
+            div.className = 'geometric-decoration';
+            div.style.position = 'absolute';
+            div.style.pointerEvents = 'none';
+            div.style.opacity = 0.2 + Math.random() * 0.15;
+            
+            const shapes = [
+                // Stepped pattern
+                () => {
+                    div.style.backgroundImage = `
+                        linear-gradient(to bottom, var(--terracotta) 30%, transparent 30%),
+                        linear-gradient(to right, transparent 35%, var(--terracotta) 35%, var(--terracotta) 65%, transparent 65%),
+                        linear-gradient(to bottom, transparent 30%, var(--terracotta) 30%, var(--terracotta) 60%, transparent 60%)
+                    `;
+                },
+                // Conic gradient
+                () => {
+                    div.style.background = `conic-gradient(from 45deg, var(--terracotta) 90deg, var(--gold) 90deg 180deg, var(--deep-teal) 180deg 270deg, var(--terracotta) 270deg)`;
+                    div.style.borderRadius = '10px';
+                },
+                // Striped pattern
+                () => {
+                    div.style.background = `repeating-linear-gradient(45deg, var(--gold) 0px, var(--gold) 10px, transparent 10px, transparent 20px)`;
+                },
+                // Triangle pattern
+                () => {
+                    div.style.backgroundImage = `
+                        linear-gradient(135deg, var(--deep-teal) 50%, transparent 50%),
+                        linear-gradient(225deg, var(--gold) 50%, transparent 50%)
+                    `;
+                },
+                // Diamond pattern
+                () => {
+                    div.style.backgroundImage = `
+                        linear-gradient(135deg, var(--terracotta) 25%, transparent 25%),
+                        linear-gradient(225deg, var(--terracotta) 25%, transparent 25%),
+                        linear-gradient(45deg, var(--gold) 25%, transparent 25%),
+                        linear-gradient(315deg, var(--gold) 25%, transparent 25%)
+                    `;
+                    div.style.backgroundPosition = '0 0, 0 0, 0 0, 0 0';
+                    div.style.backgroundSize = '50% 50%';
+                },
+                // Concentric squares
+                () => {
+                    div.style.background = `
+                        linear-gradient(var(--gold), var(--gold)),
+                        linear-gradient(var(--terracotta), var(--terracotta)),
+                        linear-gradient(var(--deep-teal), var(--deep-teal))
+                    `;
+                    div.style.backgroundSize = '100% 100%, 70% 70%, 40% 40%';
+                    div.style.backgroundPosition = 'center, center, center';
+                    div.style.backgroundRepeat = 'no-repeat';
+                }
+            ];
+            
+            shapes[Math.floor(Math.random() * shapes.length)]();
+            return div;
+        }
+        
+        // Initialize bouncing shapes in hero section
+        const hero = document.querySelector('.hero');
+        const numShapes = 5;
+        const heroShapes = [];
+        
+        for (let i = 0; i < numShapes; i++) {
+            const shapeElement = createRandomShape();
+            hero.insertBefore(shapeElement, hero.querySelector('.hero-content'));
+            heroShapes.push(new BouncingShape(shapeElement));
+        }
+        
+        function animateShapes() {
+            heroShapes.forEach(shape => shape.update());
+            requestAnimationFrame(animateShapes);
+        }
+        animateShapes();
+        
+        // Parallax effect for chakana decorations only
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    
+                    // Select parallax elements (only chakana)
+                    document.querySelectorAll('.chakana-decoration').forEach((el, index) => {
+                        const speed = 0.3 + (index * 0.1);
+                        const yPos = -(scrolled * speed);
+                        el.style.transform = `translateY(${yPos}px)`;
+                    });
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        // Add bounce animation for collateral numbers
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce-subtle {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Animate stepped patterns on scroll - split horizontally
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('.stepped-pattern').forEach((pattern) => {
+                const offsetTop = pattern.offsetTop;
+                const distance = scrolled - offsetTop + window.innerHeight;
+                const movement = Math.sin(distance * 0.002) * 30;
+                
+                // Move top and bottom rows in opposite directions
+                const before = pattern;
+                const computedStyle = window.getComputedStyle(before, '::before');
+                before.style.setProperty('--before-x', `${movement}px`);
+                before.style.setProperty('--after-x', `${-movement}px`);
+            });
+        });
+
+        // Add CSS variables for pseudo-element transforms
+        const splitStyle = document.createElement('style');
+        splitStyle.textContent = `
+            .stepped-pattern::before {
+                transform: translateX(var(--before-x, 0));
+            }
+            .stepped-pattern::after {
+                transform: translateX(var(--after-x, 0));
+            }
+        `;
+        document.head.appendChild(splitStyle);
+
+        // Add bounce to collateral items on hover
+        document.querySelectorAll('.collateral-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                const ltv = this.querySelector('.collateral-ltv');
+                ltv.style.animation = 'bounce-subtle 0.6s ease-in-out';
+            });
+            item.addEventListener('mouseleave', function() {
+                const ltv = this.querySelector('.collateral-ltv');
+                ltv.style.animation = '';
+            });
+        });
+
+        // Pulse effect on step numbers as they come into view
+        const stepObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const stepNumber = entry.target.querySelector('.step-number');
+                    stepNumber.style.animation = 'pulse-ring 1.5s ease-out';
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.step').forEach(step => {
+            stepObserver.observe(step);
+        });
+
+        const pulseStyle = document.createElement('style');
+        pulseStyle.textContent = `
+            @keyframes pulse-ring {
+                0% { box-shadow: 0 0 0 0 rgba(200, 90, 62, 0.7); }
+                70% { box-shadow: 0 0 0 20px rgba(200, 90, 62, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(200, 90, 62, 0); }
+            }
+        `;
+        document.head.appendChild(pulseStyle);
+    </script>
 </body>
 </html>
