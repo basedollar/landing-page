@@ -903,9 +903,38 @@
 
     <div class="diamond-pattern"></div>
 
-    <!-- CTA Section -->
-    <section style="background: linear-gradient(135deg, var(--cream), var(--light-sand)); padding: 4rem 2rem; position: relative; overflow: hidden;">
+    <!-- Email Signup Section -->
+    <section id="signup" style="background: linear-gradient(135deg, var(--cream), var(--light-sand)); padding: 4rem 2rem; position: relative; overflow: hidden;">
         <div class="textile-pattern" style="top: 50%; transform: translateY(-50%); height: 332px;"></div>
+        <div class="container" style="text-align: center; position: relative; z-index: 1;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Stay Updated</h2>
+            <p style="font-size: 1.2rem; color: var(--deep-teal); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Be the first to know when BaseD launches. Join our waitlist for exclusive updates.
+            </p>
+            <form id="emailForm" style="max-width: 500px; margin: 0 auto;">
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <input 
+                        type="email" 
+                        id="emailInput" 
+                        placeholder="Enter your email" 
+                        required
+                        style="flex: 1; min-width: 250px; padding: 1rem 1.5rem; border: 2px solid var(--gold); border-radius: 12px; font-size: 1rem; font-family: 'Inter', sans-serif; background: white; color: var(--dark-brown);"
+                    />
+                    <button 
+                        type="submit" 
+                        class="btn btn-primary"
+                        style="font-size: 1rem;"
+                    >
+                        Join Waitlist
+                    </button>
+                </div>
+                <div id="formMessage" style="margin-top: 1rem; font-size: 1rem; min-height: 24px;"></div>
+            </form>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="background: var(--light-sand); padding: 4rem 2rem; position: relative; overflow: hidden;">
         <div class="container" style="text-align: center; position: relative; z-index: 1;">
             <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem;">Ready to Get Started?</h2>
             <p style="font-size: 1.2rem; color: var(--deep-teal); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
@@ -1230,6 +1259,49 @@
             }
         `;
         document.head.appendChild(pulseStyle);
+
+        const emailForm = document.getElementById('emailForm');
+        const emailInput = document.getElementById('emailInput');
+        const formMessage = document.getElementById('formMessage');
+
+        emailForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = emailInput.value.trim();
+            const submitButton = emailForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            
+            submitButton.disabled = true;
+            submitButton.textContent = 'Submitting...';
+            formMessage.textContent = '';
+            formMessage.style.color = '';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    formMessage.textContent = '✓ Thanks for joining! We\'ll be in touch soon.';
+                    formMessage.style.color = 'var(--deep-teal)';
+                    emailInput.value = '';
+                } else {
+                    throw new Error(data.error || 'Submission failed');
+                }
+            } catch (error) {
+                formMessage.textContent = '✗ Something went wrong. Please try again.';
+                formMessage.style.color = 'var(--terracotta)';
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        });
     </script>
 </body>
 </html>
